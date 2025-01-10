@@ -1,0 +1,86 @@
+
+---
+title: "Bayesian SEM Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+This document demonstrates how to perform Bayesian Structural Equation Modeling (SEM) using attached dataset. Bayesian SEM allows for greater flexibility and incorporates prior knowledge into the modeling process.
+
+---
+
+## Step 1: Load the Data
+
+```{r load-data}
+# Load necessary libraries
+library(tidyverse)
+library(blavaan)
+
+# Load the dataset (assuming it's in the same folder as this Rmd file)
+data <- read.csv("bayesian_sem_data.csv")
+
+# Quick look at the data
+head(data)
+summary(data)
+```
+
+---
+
+## Step 2: Define the SEM Model
+
+```{r define-model}
+# Define the SEM model
+sem_model <- '
+  # Latent variables
+  Latent_1 =~ Indicator_1_1 + Indicator_1_2 + Indicator_1_3
+  Latent_2 =~ Indicator_2_1 + Indicator_2_2 + Indicator_2_3
+  Latent_3 =~ Indicator_3_1 + Indicator_3_2 + Indicator_3_3
+
+  # Structural paths
+  Latent_2 ~ Latent_1
+  Latent_3 ~ Latent_1 + Latent_2
+'
+```
+
+---
+
+## Step 3: Fit the Bayesian SEM Model
+
+```{r fit-model}
+# Fit the Bayesian SEM model
+fit <- blavaan::bsem(sem_model, data = data)
+
+# Summary of the model
+summary(fit, fit.measures = TRUE, standardized = TRUE)
+```
+
+---
+
+## Step 4: Check Model Diagnostics
+
+```{r diagnostics}
+# Trace plots
+blavaan::traceplot(fit)
+
+# Posterior predictive checking
+blavaan::ppcheck(fit)
+```
+
+---
+
+## Step 5: Interpret Results
+
+- **Latent Variables**: The model estimates the relationships between latent variables and their indicators.
+- **Structural Paths**: The regression paths between latent variables provide insight into their relationships.
+- **Bayesian Diagnostics**: Trace plots and posterior predictive checks ensure model convergence and goodness of fit.
+
+---
+
+## Conclusion
+
+This document demonstrates Bayesian SEM, a powerful tool for modeling complex relationships in HF/UX research. Adjust the model and priors to fit your specific dataset and research questions.
